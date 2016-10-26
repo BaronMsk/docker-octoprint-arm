@@ -27,7 +27,7 @@ RUN git clone https://github.com/foosel/OctoPrint.git && \
     virtualenv venv && \
     ./venv/bin/pip install pip --upgrade && \
     ./venv/bin/python setup.py install && \
-    mkdir ~/.octoprint && \
+    mkdir ~/.octoprint
 
 # RUN pip install pyserial
 # RUN git clone git://git.drogon.net/wiringPi
