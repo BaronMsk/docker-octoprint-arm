@@ -1,42 +1,42 @@
 FROM resin/rpi-raspbian:jessie
-MAINTAINER Emmanuel B. <manubing@gmail.com>
+MAINTAINER Emmanuel B. <emmanuel.b+dockerhub@gmail.com>
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git-core \
     build-essential \
     gcc \
     python \
     python-dev \
     python-pip \
-    python-virtualenv \
     python-setuptools \
-    libyaml-dev \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    libyaml-dev
 
-# Creates a deploy user
-RUN useradd --create-home -G tty,dialout --shell /bin/bash pi
-RUN echo "pi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN apt-get clean \
+    && rm -rf /tmp/* /var/tmp/*  \
+    && rm -rf /var/lib/apt/lists/*
 
-USER pi
-WORKDIR /home/pi
-
-RUN git clone https://github.com/foosel/OctoPrint.git && \
-    cd OctoPrint && \
-    virtualenv venv && \
-    ./venv/bin/pip install pip --upgrade && \
-    ./venv/bin/python setup.py install && \
-    mkdir ~/.octoprint
-
+# Install WiringPi to allow relay control
 # RUN pip install pyserial
 # RUN git clone git://git.drogon.net/wiringPi
 # RUN cd wiringPi && ./build
 # RUN pip install wiringpi2
 
-# # Define working directory
-# WORKDIR /data
+RUN adduser --system octoprint \
+ && addgroup octoprint \
+ && usermod -aG octoprint octoprint
 
-VOLUME /home/pi/.octoprint /dev/ttyOCT0
+RUN git clone https://github.com/foosel/OctoPrint.git /octoprint
+RUN chown -R octoprint:octoprint /octoprint
 
-CMD ["/home/pi/OctoPrint/venv/bin/octoprint"]
+WORKDIR /octoprint
+RUN pip install -r requirements.txt && \
+    python setup.py install && \
+    mkdir /data
+RUN chown octoprint:octoprint -R /octoprint /data
+
+USER octoprint
+
+VOLUME /data
+EXPOSE 5000
+CMD ["./run", "--basedir", "/data"]
