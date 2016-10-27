@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+
+  octoprint:
+    build: .
+    volumes:
+      - ./data:/data
+    ports:
+      - "5000"
