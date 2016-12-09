@@ -4,7 +4,10 @@ services:
 
   octoprint:
     build: .
+    privileged: true
     volumes:
       - ./data:/data
     ports:
-      - "5000"
+      - "5000:5000"
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
