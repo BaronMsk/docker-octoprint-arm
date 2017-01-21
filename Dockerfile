@@ -16,33 +16,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /tmp/* /var/tmp/*  \
     && rm -rf /var/lib/apt/lists/*
 
-# Install WiringPi to allow relay control
+# Installs WiringPi to allow relay control
 RUN pip install pyserial \
     && git clone git://git.drogon.net/wiringPi \
     && cd wiringPi && ./build \
     && pip install wiringpi2
 
-RUN adduser --system octoprint \
-    && addgroup octoprint \
-    && usermod -aG octoprint octoprint
-
-ENV OCTOPRINT_RELEASE_VERSION 1.3.0
+# Gets Octoprint
+ENV OCTOPRINT_RELEASE_VERSION 1.3.1rc2
 RUN curl -L -o /tmp/octoprint.tar.gz https://github.com/foosel/OctoPrint/archive/$OCTOPRINT_RELEASE_VERSION.tar.gz \
     && tar xfz /tmp/octoprint.tar.gz \
     && rm -r /tmp/octoprint.tar.gz \
-    && mv OctoPrint-$OCTOPRINT_RELEASE_VERSION /octoprint \
-    && chown -R octoprint:octoprint /octoprint
+    && mv OctoPrint-$OCTOPRINT_RELEASE_VERSION /octoprint
 
+# Installs Octoprint
 WORKDIR /octoprint
 RUN pip install pip --upgrade && \
     pip install -r requirements.txt && \
     python setup.py install
-RUN mkdir /data \
-    && chown -R octoprint:octoprint /data
-
-USER octoprint
+RUN mkdir /data
 
 VOLUME /data
 EXPOSE 5000
 
-CMD ["octoprint", "--basedir", "/data"]
+CMD ["octoprint", "serve", "--iknowwhatimdoing", "--basedir", "/data"]
