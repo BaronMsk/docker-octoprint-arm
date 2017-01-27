@@ -70,5 +70,6 @@ EXPOSE 5000
 ADD octoprint.sh /usr/bin/
 ENV YUV_CAMERA "true"
 
-ENTRYPOINT ["octoprint.sh"]
-CMD []
+COPY ./octoprint.sh /octoprint.sh
+RUN chmod +x /octoprint.sh
+CMD ["/octoprint.sh"]
