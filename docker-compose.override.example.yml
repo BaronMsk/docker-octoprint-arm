@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+
+  octoprint:
+    restart: always
+    ports:
+      - "5000:5000"
+
+  mjpg-streamer:
+    restart: always
+    ports:
+      - "8080:8080"

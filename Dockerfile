@@ -5,7 +5,6 @@ MAINTAINER Emmanuel B. <emmanuel.b+dockerhub@gmail.com>
 RUN apt-get update && apt-get install -y --no-install-recommends \
       curl \
       wget \
-      unzip \
       git \
       build-essential \
       gcc \
@@ -14,9 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python-pip \
       python-setuptools \
       libyaml-dev \
-      libjpeg-dev \
-      zlib1g-dev \
-      libv4l-dev libprotobuf9 libav-tools avrdude libjpeg62-turbo imagemagick psmisc \
     && apt-get clean \
     && rm -rf /tmp/* /var/tmp/*  \
     && rm -rf /var/lib/apt/lists/*
@@ -27,16 +23,7 @@ RUN pip install pyserial \
     && cd wiringPi && ./build \
     && pip install wiringpi2
 
-# Installs mjpg-streamer
-ENV MJPG_STREAMER_REVISION 182
-RUN wget -O /tmp/mjpg-streamer.zip http://sourceforge.net/code-snapshots/svn/m/mj/mjpg-streamer/code/mjpg-streamer-code-$MJPG_STREAMER_REVISION.zip \
-  && cd /tmp \
-  && unzip mjpg-streamer.zip \
-  && cd mjpg-streamer-code-$MJPG_STREAMER_REVISION/mjpg-streamer \
-  && make \
-  && make install \
-  && cd
-
+# Cura engine
 ENV CURA_ENGINE_VERSION=15.04.6
 RUN curl -L -o /tmp/curaengine.tar.gz https://github.com/Ultimaker/CuraEngine/archive/$CURA_ENGINE_VERSION.tar.gz \
     && tar xfz /tmp/curaengine.tar.gz \
@@ -62,14 +49,7 @@ RUN pip install pip --upgrade && \
 RUN mkdir /data
 
 VOLUME /data
-# mjpg-streamer
-EXPOSE 8080
 # octoprint
 EXPOSE 5000
 
-ADD octoprint.sh /usr/bin/
-ENV YUV_CAMERA "true"
-
-COPY ./octoprint.sh /octoprint.sh
-RUN chmod +x /octoprint.sh
-CMD ["/octoprint.sh"]
+CMD ["octoprint", "serve", "--iknowwhatimdoing", "--basedir", "/data"]
