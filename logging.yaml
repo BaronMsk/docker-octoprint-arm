@@ -1,7 +1,0 @@
-  handlers:
-  # stdout
-  console:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: simple
-    stream: ext://sys.stdout

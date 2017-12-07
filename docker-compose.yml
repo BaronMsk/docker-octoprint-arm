@@ -5,21 +5,31 @@ services:
   octoprint:
     build: .
     privileged: true
-    restart: on-failure
+    restart: always
     volumes:
-      - ./data:/data
+      - "/data/octoprint:/data"
     ports:
       - "5000"
     devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
-    links:
-      - mjpg-streamer
+      - "/dev/ttyUSB0:/dev/ttyACM0"
 
   mjpg-streamer:
-    image: mhamanaka/rpi-mjpg-streamer-uvc:0.1
+    image: fneb/rpi-mjpg-streamer-uvc
     privileged: true
-    restart: on-failure
+    restart: always
     ports:
-      - "8080"
+      - "5555:8080"
     devices:
-      - "/dev/video0:/dev/video0"
+      - "/dev/video0"
+    command:
+      - "/root/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer"
+      - "-o"
+      - "/root/mjpg-streamer/mjpg-streamer-experimental/output_http.so"
+      - "-w"
+      - "/root/mjpg-streamer/mjpg-streamer-experimental/www"
+      - "-i"
+      - "/root/mjpg-streamer/mjpg-streamer-experimental/input_uvc.so"
+      - "-r" 
+      - "1024x768" 
+      - "-f" 
+      - "30"
