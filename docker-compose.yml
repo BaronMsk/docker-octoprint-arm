@@ -3,7 +3,7 @@ version: '2'
 services:
 
   octoprint:
-    build: .
+    build: ./octoprint
     privileged: true
     restart: always
     volumes:
@@ -14,22 +14,10 @@ services:
       - "/dev/ttyUSB0:/dev/ttyACM0"
 
   mjpg-streamer:
-    image: fneb/rpi-mjpg-streamer-uvc
+    build: ./mpeg
     privileged: true
     restart: always
     ports:
       - "5555:8080"
     devices:
       - "/dev/video0"
-    command:
-      - "/root/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer"
-      - "-o"
-      - "/root/mjpg-streamer/mjpg-streamer-experimental/output_http.so"
-      - "-w"
-      - "/root/mjpg-streamer/mjpg-streamer-experimental/www"
-      - "-i"
-      - "/root/mjpg-streamer/mjpg-streamer-experimental/input_uvc.so"
-      - "-r" 
-      - "1024x768" 
-      - "-f" 
-      - "30"
