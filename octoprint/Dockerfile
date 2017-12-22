@@ -35,7 +35,7 @@ RUN curl -L -o /tmp/curaengine.tar.gz https://github.com/Ultimaker/CuraEngine/ar
     && cd
 
 # Gets Octoprint
-ENV OCTOPRINT_RELEASE_VERSION 1.3.5
+ENV OCTOPRINT_RELEASE_VERSION 1.3.6
 RUN curl -L -o /tmp/octoprint.tar.gz https://github.com/foosel/OctoPrint/archive/$OCTOPRINT_RELEASE_VERSION.tar.gz \
     && tar xfz /tmp/octoprint.tar.gz \
     && rm -r /tmp/octoprint.tar.gz \
